@@ -7,9 +7,27 @@ end
 
 local diag = { set = 0, err = nil, readback = nil, tried = 0 }
 
+-- The lists name every Rampant faction unit; keep only those that exist in this game, so a different faction
+-- setup (or no ArmouredBiters) doesn't stop a list at its first unknown name.
+local present = {}
+local function list_for(base)
+  if present[base] == nil then
+    local list = L[base]
+    if list then
+      local kept = {}
+      for _, name in ipairs(list) do
+        if prototypes.entity[name] then kept[#kept + 1] = name end
+      end
+      list = #kept > 0 and kept or false
+    end
+    present[base] = list or false
+  end
+  return present[base] or nil
+end
+
 local function apply(entity)
   if not (entity and entity.valid) then return false end
-  local list = L[base_name(entity.name)]
+  local list = list_for(base_name(entity.name))
   if not list then return false end
   local set = 0
   for i = 1, #list do
@@ -40,7 +58,7 @@ local function apply_all(player)
   end
   player.print({"rtt.applied", n})
   local msg = "[RTT] matched " .. diag.tried .. ", set>0 on " .. diag.set .. ", slot1 readback: " .. tostring(diag.readback) .. ", first error: " .. tostring(diag.err)
-  player.print(msg); log(msg)
+  log(msg)
   diag = { set = 0, err = nil, readback = nil, tried = 0 }
 end
 

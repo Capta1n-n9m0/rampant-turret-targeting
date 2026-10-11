@@ -1,9 +1,9 @@
 {
   "name": "rampant-turret-targeting",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "title": "Rampant Turret Targeting",
-  "author": "aliev",
-  "factorio_version": "2.0",
-  "dependencies": ["base >= 2.0", "? RampantFixed", "? HeroTurretRedux", "? ArmouredBiters"],
-  "description": "Applies per-turret-type target priority lists (tuned for Rampant factions) to all turrets, via a shortcut button and automatically on build."
+  "author": "Capta1n_n9m0",
+  "factorio_version": "2.1",
+  "dependencies": ["base >= 2.1", "RampantFixed", "? ArmouredBiters", "? HeroTurretRedux", "? HeroTurretsReduxFork"],
+  "description": "Applies per-turret-type target priority lists (tuned for Rampant factions) to gun, laser and flamethrower turrets, including ranked hero turrets, via a shortcut button and automatically on build."
 }

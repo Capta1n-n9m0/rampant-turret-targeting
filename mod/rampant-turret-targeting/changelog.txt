@@ -1,0 +1,12 @@
+---------------------------------------------------------------------------------------------------
+Version: 1.0.1
+Date: 2026-10-11
+  Changes:
+    - Priority lists skip enemies that don't exist in the game, so other Rampant faction setups work.
+    - The diagnostic line goes to the log only, not to chat.
+    - RampantFixed is now a required dependency; HeroTurretsReduxFork is supported.
+---------------------------------------------------------------------------------------------------
+Version: 1.0.0
+Date: 2026-08-30
+  Features:
+    - Shortcut button and auto-apply on build of Rampant-tuned target priority lists for gun, laser and flamethrower turrets.
