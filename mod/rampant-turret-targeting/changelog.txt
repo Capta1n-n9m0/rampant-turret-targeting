@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.2
+Date: 2026-10-19
+  Features:
+    - Remote interface "rampant-turret-targeting" with apply(force_name), the same as the shortcut button for scripts.
+    - Remote last_apply() tells when the last apply ran, how (shortcut or remote), for which force and player, and how many turrets it set; is_applied(turret) tells whether a turret holds exactly the targeting list.
+  Info:
+    - Ships with automated tests (tests folder, for FactorioTest). They load only when the factorio-test mod is active; normal play is unchanged.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.1
 Date: 2026-10-11
   Changes:

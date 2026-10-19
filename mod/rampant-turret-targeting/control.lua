@@ -49,24 +49,53 @@ local function apply(entity)
   return set > 0
 end
 
-local function apply_all(player)
+-- true if the turret's priority list is exactly ours
+local function is_applied(entity)
+  if not (entity and entity.valid) then return false end
+  local list = list_for(base_name(entity.name))
+  if not list then return false end
+  for i = 1, #list do
+    local ok, p = pcall(entity.get_priority_target, i)
+    if not (ok and p and p.name == list[i]) then return false end
+  end
+  local ok, p = pcall(entity.get_priority_target, #list + 1)
+  return not (ok and p)
+end
+
+local function apply_all(force, player, source)
   local n = 0
   for _, surface in pairs(game.surfaces) do
-    for _, e in pairs(surface.find_entities_filtered{type = TURRET_TYPES, force = player.force}) do
+    for _, e in pairs(surface.find_entities_filtered{type = TURRET_TYPES, force = force}) do
       if apply(e) then n = n + 1 end
     end
   end
-  player.print({"rtt.applied", n})
+  if player then player.print({"rtt.applied", n}) end
   local msg = "[RTT] matched " .. diag.tried .. ", set>0 on " .. diag.set .. ", slot1 readback: " .. tostring(diag.readback) .. ", first error: " .. tostring(diag.err)
   log(msg)
+  -- what the last apply did, for remote.call(..., "last_apply")
+  storage.last_apply = {
+    tick = game.tick, source = source, force = force.name, player = player and player.name or nil,
+    matched = diag.tried, turrets = n, first_error = diag.err,
+  }
   diag = { set = 0, err = nil, readback = nil, tried = 0 }
+  return n
 end
 
 script.on_event(defines.events.on_lua_shortcut, function(ev)
   if ev.prototype_name == "rtt-apply-targeting" then
-    apply_all(game.get_player(ev.player_index))
+    local player = game.get_player(ev.player_index)
+    apply_all(player.force, player, "shortcut")
   end
 end)
+
+remote.add_interface("rampant-turret-targeting", {
+  -- same as the shortcut, for scripts and tests: returns the number of turrets that got a list
+  apply = function(force_name) return apply_all(game.forces[force_name or "player"], nil, "remote") end,
+  -- the last apply (shortcut or remote): {tick, source, force, player, matched, turrets, first_error}, or nil
+  last_apply = function() return storage.last_apply end,
+  -- whether a turret has exactly our list right now
+  is_applied = function(entity) return is_applied(entity) end,
+})
 
 -- auto-apply to anything newly built (player, robot, or script -- HeroTurret rank-ups raise script_raised_built)
 local function on_built(ev)
@@ -79,3 +108,7 @@ script.on_event(defines.events.on_built_entity, on_built, filter)
 script.on_event(defines.events.on_robot_built_entity, on_built, filter)
 script.on_event(defines.events.script_raised_built, on_built, filter)
 script.on_event(defines.events.script_raised_revive, on_built, filter)
+
+if script.active_mods["factorio-test"] then
+  require("__factorio-test__/init")({"tests/targeting"})
+end
