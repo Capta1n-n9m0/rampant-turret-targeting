@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "hero": ["HeroTurretRedux", "ArmouredBiters"],
+    "fork": ["HeroTurretsReduxFork", "!HeroTurretRedux"]
+  }
+}

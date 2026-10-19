@@ -1,0 +1,5 @@
+# FactorioTest run output
+tests/out/
+# generator output
+out/
+__pycache__/
